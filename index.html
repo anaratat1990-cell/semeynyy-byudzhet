@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1b6b57" />
+    <meta name="description" content="Семейный бюджет для двоих" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="edit.css" />
+    <title>Вместе копим</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Семейный бюджет</p>
+          <h1>Вместе копим <span>♥</span></h1>
+        </div>
+        <button class="avatar" id="memberButton" aria-label="Сменить пользователя">АМ</button>
+      </header>
+
+      <section id="screen-home" class="screen active">
+        <div class="month-row">
+          <button class="icon-button" aria-label="Предыдущий месяц">‹</button>
+          <strong>Август 2026</strong>
+          <button class="icon-button" aria-label="Следующий месяц">›</button>
+        </div>
+        <article class="hero-card">
+          <div class="hero-label">Можно отложить в августе</div>
+          <div class="hero-value" id="availableAmount">0 ₸</div>
+          <p id="availableNote">После обязательных расходов и резерва</p>
+          <div class="progress-track"><i id="savingsProgress"></i></div>
+          <div class="hero-foot"><span>Уже отложено <b id="savedAmount">0 ₸</b></span><span id="savingsPercent">0%</span></div>
+          <button class="primary-button" id="saveMoneyButton">Отложить деньги</button>
+        </article>
+
+        <section class="summary-grid">
+          <article><span class="summary-icon income">↗</span><p>Доходы <button class="inline-edit" id="openIncomeEdit" aria-label="Редактировать общий доход">✎</button></p><strong id="incomeAmount">0 ₸</strong></article>
+          <article><span class="summary-icon expense">↙</span><p>Расходы</p><strong id="expenseAmount">0 ₸</strong></article>
+        </section>
+
+        <section class="section-head"><div><h2>Ближайшие цели</h2><p>Маленькие шаги — большие планы</p></div><button class="text-button" data-nav="goals">Все</button></section>
+        <div id="goalsPreview" class="goal-list"></div>
+
+        <section class="section-head compact"><div><h2>Последние операции</h2></div><button class="text-button" data-nav="transactions">Все</button></section>
+        <div id="recentTransactions" class="transaction-list"></div>
+      </section>
+
+      <section id="screen-transactions" class="screen">
+        <div class="page-title"><div><p class="eyebrow">Движение денег</p><h2>Операции</h2></div><button class="round-add" id="openTransaction">＋</button></div>
+        <div class="filter-row"><button class="filter active" data-filter="all">Все</button><button class="filter" data-filter="expense">Расходы</button><button class="filter" data-filter="income">Доходы</button></div>
+        <div id="transactionsList" class="transaction-list full"></div>
+      </section>
+
+      <section id="screen-goals" class="screen">
+        <div class="page-title"><div><p class="eyebrow">Общие мечты</p><h2>Накопления</h2></div><button class="round-add" id="openGoal">＋</button></div>
+        <div id="goalsFull" class="goal-list full"></div>
+        <article class="tip-card"><span>✦</span><p>Настройте автоматический перевод в день зарплаты — так копить легче.</p></article>
+      </section>
+
+      <section id="screen-analytics" class="screen">
+        <div class="page-title"><div><p class="eyebrow">Понимаем привычки</p><h2>Аналитика</h2></div></div>
+        <article class="chart-card"><div class="chart-title"><div><p>Расходы за август</p><strong id="chartTotal">0 ₸</strong></div><span class="pill">Семья</span></div><div id="categoryChart" class="category-chart"></div></article>
+        <article class="insight-card"><span>💡</span><div><strong id="insightTitle">Совет месяца</strong><p id="insightText"></p></div></article>
+        <h3>По участникам</h3><div id="memberStats" class="member-stats"></div>
+      </section>
+
+      <nav class="bottom-nav" aria-label="Навигация">
+        <button class="nav-item active" data-nav="home"><span>⌂</span>Главная</button>
+        <button class="nav-item" data-nav="transactions"><span>↕</span>Операции</button>
+        <button class="nav-item" data-nav="goals"><span>◎</span>Цели</button>
+        <button class="nav-item" data-nav="analytics"><span>▥</span>Аналитика</button>
+      </nav>
+    </main>
+
+    <dialog id="transactionDialog"><form method="dialog" id="transactionForm"><div class="modal-head"><h2>Новая операция</h2><button class="close" value="cancel">×</button></div><div class="toggle"><button type="button" class="toggle-choice selected" data-type="expense">Расход</button><button type="button" class="toggle-choice" data-type="income">Доход</button></div><label>Сумма, ₸<input required type="number" name="amount" min="1" placeholder="Например, 850" /></label><label>Статья расхода или дохода<input required name="category" id="categorySelect" list="categoryOptions" placeholder="Выберите или введите свою" /><datalist id="categoryOptions"></datalist></label><label>Описание<input required name="description" placeholder="Например, Яндекс Такси" /></label><label>Кто оплатил<select name="member"><option>Нурсултан</option><option>Анара</option></select></label><button class="primary-button" value="default">Сохранить</button></form></dialog>
+    <dialog id="goalDialog"><form method="dialog" id="goalForm"><div class="modal-head"><h2>Новая цель</h2><button class="close" value="cancel">×</button></div><label>Название цели<input required name="title" placeholder="Например, Ремонт" /></label><label>Нужно накопить, ₸<input required type="number" name="target" min="1" /></label><label>Уже есть, ₸<input required type="number" name="saved" min="0" value="0" /></label><button class="primary-button" value="default">Добавить цель</button></form></dialog>
+    <dialog id="incomeDialog"><form method="dialog" id="incomeForm"><div class="modal-head"><h2>Доход семьи за месяц</h2><button class="close" value="cancel">×</button></div><label>Сумма, ₸<input required type="number" name="income" min="0" placeholder="Например, 270000" /></label><p class="form-note">Эта сумма используется в общем расчёте и её можно изменить в любой момент.</p><button class="primary-button" value="default">Сохранить доход</button></form></dialog>
+    <script src="app.js"></script>
+    <script>
+      document.querySelector('#openIncomeEdit').onclick=()=>{
+        const form=document.querySelector('#incomeForm');
+        form.income.value=sum('income');
+        document.querySelector('#incomeDialog').showModal();
+      };
+      document.querySelector('#incomeForm').addEventListener('submit',e=>{
+        if(e.submitter?.value==='cancel')return;
+        const next=+new FormData(e.target).get('income'), current=sum('income');
+        const record=data.transactions.find(x=>x.type==='income');
+        if(record)record.amount=Math.max(0,record.amount+next-current);
+        else data.transactions.unshift({id:Date.now(),type:'income',amount:next,category:'Другое',description:'Доход семьи',member:'Анна',date:'Сегодня'});
+        save();render();
+      });
+      document.querySelector('#memberButton').onclick=()=>alert('Семья: Нурсултан и Анара');
+    </script>
+  </body>
+</html>
